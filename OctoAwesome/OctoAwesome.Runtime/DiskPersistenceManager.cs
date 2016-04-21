@@ -25,7 +25,7 @@ namespace OctoAwesome.Runtime
 
         private const string EntitiesFilename = "entities_{0}_{1}.dat";
 
-        private DirectoryInfo root;        
+        private DirectoryInfo root;
 
         private string GetRoot()
         {
@@ -141,11 +141,15 @@ namespace OctoAwesome.Runtime
 
             string file = path = Path.Combine(path, string.Format(EntitiesFilename, columnIndex.X, columnIndex.Y));
 
-            if (!File.Exists(file)) {
-                Dog dog = new Dog(new Coordinate(planetId, 
+            if (!File.Exists(file))
+            {
+                Dog dog = new Dog()
+                {
+                    Position = new Coordinate(planetId,
                     new Index3(
-                        (int)((columnIndex.X + 0.5f) * Chunk.CHUNKSIZE_X), 
-                        (int)((columnIndex.Y + 0.5f) * Chunk.CHUNKSIZE_Y), 1000), Vector3.Zero));
+                        (int)((columnIndex.X + 0.5f) * Chunk.CHUNKSIZE_X),
+                        (int)((columnIndex.Y + 0.5f) * Chunk.CHUNKSIZE_Y), 41), Vector3.Zero)
+                };
                 return new Entity[] { dog };
             }
 
@@ -157,7 +161,8 @@ namespace OctoAwesome.Runtime
                     Entity[] result = new Entity[count];
                     for (int i = 0; i < count; i++)
                     {
-                        Type type = Type.GetType(reader.ReadString());
+                        string typeName = reader.ReadString();
+                        Type type = Type.GetType(typeName);
                         Entity entity = (Entity)Activator.CreateInstance(type);
                         entity.Deserialize(reader);
                         result[i] = entity;
@@ -189,7 +194,8 @@ namespace OctoAwesome.Runtime
                     writer.Write(entites.Length);
                     foreach (var entity in entites)
                     {
-                        writer.Write(entity.GetType().FullName);
+                        Type t = entity.GetType();
+                        writer.Write(t.AssemblyQualifiedName);
                         entity.Serialize(writer);
                     }
                 }
@@ -286,13 +292,14 @@ namespace OctoAwesome.Runtime
             if (!File.Exists(file))
                 return null;
 
-            try {
-            using (Stream stream = File.Open(file, FileMode.Open, FileAccess.Read))
+            try
             {
-                using (GZipStream zip = new GZipStream(stream, CompressionMode.Decompress))
+                using (Stream stream = File.Open(file, FileMode.Open, FileAccess.Read))
                 {
-                    return planet.Generator.GenerateColumn(zip, DefinitionManager.Instance, planet.Id, columnIndex);
-                }
+                    using (GZipStream zip = new GZipStream(stream, CompressionMode.Decompress))
+                    {
+                        return planet.Generator.GenerateColumn(zip, DefinitionManager.Instance, planet.Id, columnIndex);
+                    }
                 }
             }
             catch (IOException)
@@ -319,16 +326,21 @@ namespace OctoAwesome.Runtime
             if (!File.Exists(file))
                 return null;
 
-            using (Stream stream = File.Open(file, FileMode.Open, FileAccess.Read))
+            try
             {
-                try {
-                    XmlSerializer serializer = new XmlSerializer(typeof(Player));
-                    return (Player)serializer.Deserialize(stream);
-                }
-                catch (Exception)
+                using (Stream stream = File.Open(file, FileMode.Open, FileAccess.Read))
                 {
-                    File.Delete(file);
+                    using (BinaryReader br = new BinaryReader(stream))
+                    {
+                        Player player = new Player();
+                        player.Deserialize(br);
+                        return player;
+                    };
                 }
+            }
+            catch (Exception)
+            {
+                File.Delete(file);
             }
 
             return null;
@@ -348,8 +360,10 @@ namespace OctoAwesome.Runtime
             string file = Path.Combine(path, "player.info");
             using (Stream stream = File.Open(file, FileMode.Create, FileAccess.Write))
             {
-                XmlSerializer serializer = new XmlSerializer(typeof(Player));
-                serializer.Serialize(stream, player);
+                using (BinaryWriter bw = new BinaryWriter(stream))
+                {
+                    player.Serialize(bw);
+                }
             }
         }
     }

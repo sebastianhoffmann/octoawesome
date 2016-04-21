@@ -14,7 +14,7 @@ namespace OctoAwesome.Runtime
     /// </summary>
     public sealed class Simulation
     {
-        private List<EntityHost> entityHosts = new List<EntityHost>();
+        private List<PermanentEntity> entities = new List<PermanentEntity>();
         private Stopwatch watch = new Stopwatch();
         private Thread thread;
 
@@ -31,7 +31,7 @@ namespace OctoAwesome.Runtime
         /// <summary>
         /// Die in der Simulation vorhandenen steuerbaren Entitäten.
         /// </summary>
-        public IEnumerable<ControllableEntity> Entities { get { return entityHosts.Select(e => e.Entity); } }
+        public IEnumerable<PermanentEntity> Entities { get { return entities; } }
 
         /// <summary>
         /// Erzeugt eine neue Instaz der Klasse Simulation.
@@ -96,7 +96,7 @@ namespace OctoAwesome.Runtime
 
                 if (State != SimulationState.Paused)
                 {
-                    foreach (var entityHost in entityHosts.Where(h => h.ReadyState))
+                    foreach (var entityHost in entities.Where(h => h.ReadyState))
                         entityHost.Update(gameTime);
                 }
 
@@ -105,7 +105,7 @@ namespace OctoAwesome.Runtime
                     Thread.Sleep(diff);
             }
 
-            foreach (var actorHost in entityHosts)
+            foreach (var actorHost in entities)
                 actorHost.Unload();
         }
 
@@ -129,31 +129,28 @@ namespace OctoAwesome.Runtime
         /// <param name="player">Der Player.</param>
         /// <param name="firstTime">Gibt an, ob der Spieler zum ersten Mal in dieser Welt geladen wird. Wenn true, wird der Spieler auf Bodenniveau gesetzt.</param>
         /// <returns>Der neue ActorHost zur Steuerung des Spielers.</returns>
-        public ActorHost InsertPlayer(Player player, bool firstTime)
+        public void InsertPlayer(Player player, bool firstTime)
         {
-            var host = new ActorHost(player);            
-            entityHosts.Add(host);
-            host.Initialize(() => 
-            {
-                if (firstTime)
-                    host.BeamUp();
-            });
+            entities.Add(player);
+            player.Initialize(ResourceManager.Instance, firstTime);
+            //host.Initialize(() => 
+            //{
+            //    if (firstTime)
+            //        host.BeamUp();
+            //});
 
             // TODO: Insert Pet
-            Coordinate dogCoordinate = host.Position + new Index3(5, 0, 2);
-            Dog wauzi = new Dog(dogCoordinate);
-            var dogHost = new EntityHost(wauzi);
-            entityHosts.Add(dogHost);
-            dogHost.Initialize(null);
-
-            return host;
+            //Coordinate dogCoordinate = player.Position + new Index3(5, 0, 2);
+            //Dog wauzi = new Dog() { Position = dogCoordinate };
+            //entities.Add(wauzi);
+            //wauzi.Initialize(ResourceManager.Instance);
         }
 
         /// <summary>
         /// Entfernt einen Spieler aus dem Spiel.
         /// </summary>
         /// <param name="host">Der ActorHost des Spielers.</param>
-        public void RemovePlayer(ActorHost host)
+        public void RemovePlayer(Player player)
         {
 
         }

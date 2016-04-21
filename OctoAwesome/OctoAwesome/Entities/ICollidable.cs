@@ -25,5 +25,10 @@ namespace OctoAwesome.Entities
         /// Gibt an, ob der Spieler an Boden ist
         /// </summary>
         bool OnGround { get; set; }
+
+        /// <summary>
+        /// Geschwindikeit der Entität als Vektor
+        /// </summary>
+        Vector3 Velocity { get; set; }
     }
 }

@@ -61,10 +61,10 @@ namespace OctoAwesome.Client.Controls
                 int offset = (contentArea.Width - width) / 2;
                 int index = 0;
 
-                if (Player.ActorHost.ActiveTool != null && Player.Tools.Count > 0) // > 0 Check erforderlich da durch einen Bug ActiveTool auch gesetzt bleibt wenn kein Tool mehr vorhanden ist
+                if (Player.Player.ActiveTool != null && Player.Tools.Count > 0) // > 0 Check erforderlich da durch einen Bug ActiveTool auch gesetzt bleibt wenn kein Tool mehr vorhanden ist
                 {
                     activeToolLabel.Visible = true;
-                    activeToolLabel.Text = Player.ActorHost.ActiveTool.Definition.Name;
+                    activeToolLabel.Text = Player.Player.ActiveTool.Definition.Name;
                 }
                 else { 
                     activeToolLabel.Visible = false;
@@ -73,9 +73,9 @@ namespace OctoAwesome.Client.Controls
                 foreach (var tool in Player.Tools)
                 {
                     batch.Draw(Skin.Pix, new Rectangle(offset + (index * 42) - 2 + contentArea.X, contentArea.Height - 60 - 2 + contentArea.Y, 36, 36),
-                        Player.ActorHost.ActiveTool == tool ? Color.Gold : new Color(Color.White, 0.8f));
+                        Player.Player.ActiveTool == tool ? Color.Gold : new Color(Color.White, 0.8f));
                     batch.Draw(toolTextures[tool.Definition.GetType().FullName], new Rectangle(offset + (index * 42) + contentArea.X, contentArea.Height - 60 + contentArea.Y, 32, 32),
-                       Player.ActorHost.ActiveTool == tool ? Color.White : new Color(Color.White, 0.8f));
+                       Player.Player.ActiveTool == tool ? Color.White : new Color(Color.White, 0.8f));
 
                     index++;
                 }

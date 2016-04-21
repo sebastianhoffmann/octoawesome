@@ -68,10 +68,9 @@
     <Compile Include="Entities\IBody.cs" />
     <Compile Include="Entities\ICollidable.cs" />
     <Compile Include="Entities\IControllable.cs" />
-    <Compile Include="Entities\IMoving.cs" />
+    <Compile Include="Entities\IInventory.cs" />
     <Compile Include="Entities\IPosition.cs" />
     <Compile Include="Entities\IRotatable.cs" />
-    <Compile Include="Entities\MovingEntity.cs" />
     <Compile Include="Entities\PermanentEntity.cs" />
     <Compile Include="EntityCache.cs" />
     <Compile Include="GlobalChunkCache.cs" />

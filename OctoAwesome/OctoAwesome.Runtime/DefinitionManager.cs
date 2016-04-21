@@ -43,6 +43,8 @@ namespace OctoAwesome.Runtime
 
         private void EnsureLoaded()
         {
+            // TODO: Lock wieder los werden -> EnsureLoaded() 
+            // in Init() umwandeln und beim Programmstart ausführen.
             lock (lockObject)
             {
                 if (itemDefinitions == null)

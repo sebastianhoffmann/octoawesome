@@ -52,7 +52,7 @@ namespace OctoAwesome.Client.Components
             Simulation = null;
         }
 
-        public ActorHost InsertPlayer(Player player, bool firstTime)
+        public void InsertPlayer(Player player, bool firstTime)
         {
             if (Simulation == null)
                 throw new NotSupportedException();
@@ -60,10 +60,10 @@ namespace OctoAwesome.Client.Components
             if (Simulation.State != SimulationState.Running && Simulation.State != SimulationState.Paused)
                 throw new NotSupportedException();
 
-            return Simulation.InsertPlayer(player, firstTime);
+            Simulation.InsertPlayer(player, firstTime);
         }
 
-        public void RemovePlayer(ActorHost host)
+        public void RemovePlayer(Player player)
         {
             if (Simulation == null)
                 throw new NotSupportedException();
@@ -71,7 +71,7 @@ namespace OctoAwesome.Client.Components
             if (Simulation.State != SimulationState.Running && Simulation.State != SimulationState.Paused)
                 throw new NotSupportedException();
 
-            Simulation.RemovePlayer(host);
+            Simulation.RemovePlayer(player);
         }
     }
 }

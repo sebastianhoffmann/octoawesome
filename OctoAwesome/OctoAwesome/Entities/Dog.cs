@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Microsoft.Xna.Framework;
 
 namespace OctoAwesome.Entities
 {
@@ -12,13 +13,8 @@ namespace OctoAwesome.Entities
     /// </summary>
     public class Dog : ControllableEntity
     {
-        /// <summary>
-        /// Erzeugt eine neue Instanz eines Hundes.
-        /// </summary>
-        /// <param name="coordinate">Die Position des Hundes.</param>
-        public Dog(Coordinate coordinate)
+        public Dog()
         {
-            Position = coordinate;
             Radius = 0.5f;
             Height = 1f;
             Mass = 100;

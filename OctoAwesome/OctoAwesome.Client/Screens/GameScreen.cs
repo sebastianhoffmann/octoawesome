@@ -316,7 +316,7 @@ namespace OctoAwesome.Client.Screens
                     Manager.NavigateToScreen(new MainScreen(Manager));
                     break;
                 case Keys.L:
-                    Manager.Player.ActorHost.AllBlocksDebug();
+                    Manager.Player.Player.AllBlocksDebug();
                     break;
             }
         }

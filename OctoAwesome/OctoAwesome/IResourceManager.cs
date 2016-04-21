@@ -38,6 +38,22 @@ namespace OctoAwesome
         void SavePlayer(Player player);
 
         /// <summary>
+        /// Loaden von Entitäten
+        /// </summary>
+        /// <param name="planetId">Index des Planeten.</param>
+        /// <param name="columnIndex">Column-Adresse</param>
+        /// <returns>Liste der Entitäten</returns>
+        Entity[] LoadEntities(int planetId, Index2 columnIndex);
+
+        /// <summary>
+        /// Speichern von Entitäten
+        /// </summary>
+        /// <param name="planetId">Index des Planeten.</param>
+        /// <param name="columnIndex">Column-Adresse</param>
+        /// <param name="entites">Liste der Entitäten</param>
+        void SaveEntities(int planetId, Index2 columnIndex, Entity[] entites);
+
+        /// <summary>
         /// Entlädt das aktuelle Universum
         /// </summary>
         /// <returns>Das gewünschte Universum, falls es existiert</returns>
@@ -54,5 +70,16 @@ namespace OctoAwesome
         /// Cache der für alle Chunks verwaltet und diese an lokale Caches weiter gibt.
         /// </summary>
         IGlobalChunkCache GlobalChunkCache { get; }
+
+        /// <summary>
+        /// Der globale Entity Cache
+        /// </summary>
+        EntityCache EntityCache { get; }
+
+        /// <summary>
+        /// Item- und Block-Definitions.
+        /// </summary>
+        IDefinitionManager Definitions { get; }
+
     }
 }

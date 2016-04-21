@@ -15,7 +15,9 @@ namespace OctoAwesome.Runtime
 
         private IPersistenceManager persistenceManager = null;
 
-        private GlobalChunkCache globalChunkCache = null;
+        private IGlobalChunkCache globalChunkCache = null;
+
+        private IDefinitionManager definitions = null;
 
         private EntityCache entityCache = null;
 
@@ -56,9 +58,11 @@ namespace OctoAwesome.Runtime
                 (p, i) => loadChunkColumn(p, i),
                 (p, i, c) => saveChunkColumn(p, i, c));
 
+            definitions = DefinitionManager.Instance;
+
             planets = new Dictionary<int, IPlanet>();
 
-            entityCache = new EntityCache();
+            entityCache = new EntityCache(this);
 
             bool.TryParse(SettingsManager.Get("DisablePersistence"), out disablePersistence);
         }
@@ -67,6 +71,11 @@ namespace OctoAwesome.Runtime
         /// Der <see cref="IGlobalChunkCache"/>, der im Spiel verwendet werden soll.
         /// </summary>
         public IGlobalChunkCache GlobalChunkCache { get { return globalChunkCache; } }
+
+        /// <summary>
+        /// Item- und Block-Definitions.
+        /// </summary>
+        public IDefinitionManager Definitions { get { return definitions; } }
 
         /// <summary>
         /// Der globale Entity Cache
@@ -203,6 +212,34 @@ namespace OctoAwesome.Runtime
                 throw new Exception("No Universe loaded");
 
             persistenceManager.SavePlayer(universe.Id, player);
+        }
+
+        /// <summary>
+        /// Laden von Entitäten
+        /// </summary>
+        /// <param name="planetId">Index des Planeten.</param>
+        /// <param name="columnIndex">Column-Adresse</param>
+        /// <returns>Liste der Entitäten</returns>
+        public Entity[] LoadEntities(int planetId, Index2 columnIndex)
+        {
+            if (universe == null)
+                throw new Exception("No Universe loaded");
+
+            return persistenceManager.LoadEntities(universe.Id, planetId, columnIndex);
+        }
+
+        /// <summary>
+        /// Speichern von Entitäten
+        /// </summary>
+        /// <param name="planetId">Index des Planeten.</param>
+        /// <param name="columnIndex">Column-Adresse</param>
+        /// <param name="entites">Liste der Entitäten</param>
+        public void SaveEntities(int planetId, Index2 columnIndex, Entity[] entites)
+        {
+            if (universe == null)
+                throw new Exception("No Universe loaded");
+
+            persistenceManager.SaveEntities(universe.Id, planetId, columnIndex, entites);
         }
 
         private IChunkColumn loadChunkColumn(int planetId, Index2 index)
