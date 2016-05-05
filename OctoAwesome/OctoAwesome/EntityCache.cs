@@ -16,31 +16,16 @@ namespace OctoAwesome
 
         private IResourceManager resourceManager;
 
-        private List<X> Entries { get; set; }
-
         private Thread loaderThread;
 
         public EntityCache(IResourceManager resourceManager)
         {
             this.resourceManager = resourceManager;
 
-            Entries = new List<X>();
-
             loaderThread = new Thread(LoaderLoop);
             loaderThread.IsBackground = true;
             loaderThread.Priority = ThreadPriority.Lowest;
             loaderThread.Start();
-        }
-
-        public void Update()
-        {
-            foreach (var Entity in Entries)
-            {
-                // TODO: Update
-                Entity.Update();
-
-                // Evtl. nur Entites simulieren die nicht im Grenzbereich stehen?
-            }
         }
 
         public void Subscribe(IPlanet planet, Index2 index, int activationRange)
@@ -85,9 +70,9 @@ namespace OctoAwesome
                         }
 
                         // Hard Reference
-                        if (x >= -activationRange ||
-                            x <= activationRange ||
-                            y >= -activationRange ||
+                        if (x >= -activationRange &&
+                            x <= activationRange &&
+                            y >= -activationRange &&
                             y <= activationRange)
                         {
                             reference.HardReference++;
@@ -121,9 +106,9 @@ namespace OctoAwesome
                         SubscriptionInfo reference = references[i];
 
                         // Hard Reference
-                        if (x >= -activationRange ||
-                            x <= activationRange ||
-                            y >= -activationRange ||
+                        if (x >= -activationRange &&
+                            x <= activationRange &&
+                            y >= -activationRange &&
                             y <= activationRange)
                         {
                             reference.HardReference--;
@@ -227,30 +212,6 @@ namespace OctoAwesome
                         Console.WriteLine(references.Count());
                     }
                 }
-            }
-        }
-
-        private class X
-        {
-            public Index2 Position { get; set; }
-
-            public Entity Entity { get; set; }
-
-            public LocalChunkCache Cache { get; set; }
-
-            public void Update()
-            {
-                // TODO: Entity Movement
-                // TODO: evtl. ChunkMove
-                //  -> Freeze, falls neuer Chunk nicht in der Liste
-                //  -> Cache aktualisieren
-
-                /*
-                    Frage: was passiert, wenn Entity sich aus dem geladenen bereich bewegt?
-                    a) Freeze im alten Chunk (leider wirds dann weiterhin simuliert)
-                    b) Zielchunk (Entities laden), Entity bewegen, Zielchunk wieder entladen
-                    c) Grenzchunks zwar laden, aber nicht simulieren
-                */
             }
         }
 
