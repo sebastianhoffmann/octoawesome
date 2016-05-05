@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using OctoAwesome.Entities;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -109,7 +110,7 @@ namespace OctoAwesome
         /// <param name="player">Spieler</param>
         /// <param name="invertvelocity">Gibt an ob die geschwindigkeit invertiert werden soll</param>
         /// <returns>Alle beteiligten Flächen des Spielers</returns>
-        public static IEnumerable<CollisionPlane> GetPlayerCollisionPlanes(Player player,bool invertvelocity = true)
+        public static IEnumerable<CollisionPlane> GetPlayerCollisionPlanes(CollidableEntity player,bool invertvelocity = true)
         {
             var pos = player.Position.BlockPosition;
             var vel = invertvelocity ? -1 * player.Velocity : player.Velocity;

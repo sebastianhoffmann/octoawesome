@@ -451,7 +451,7 @@ namespace OctoAwesome.Client.Controls
                 }
             }
 
-            foreach (var item in ResourceManager.Instance.EntityCache.Entities.OfType<Entities.Dog>())
+            foreach (var item in ResourceManager.Instance.EntityCache.Entities.OfType<Entities.Dog>().ToArray())
             {
                 Vector3 relativePosition = new Index3(
                     Index2.ShortestDistanceOnAxis(offset.X, item.Position.GlobalBlockIndex.X, planetSize.X),
