@@ -87,10 +87,13 @@ namespace OctoAwesome.Runtime
         /// </summary>
         /// <param name="name">Name des neuen Universums.</param>
         /// <param name="seed">Weltgenerator-Seed für das neue Universum.</param>
-        public void NewUniverse(string name, int seed)
+        /// <returns>Die Guid des neuen Universums.</returns>
+        public Guid NewUniverse(string name, int seed)
         {
-            universe = new Universe(Guid.NewGuid(), name, seed);
+            Guid guid = Guid.NewGuid();
+            universe = new Universe(guid, name, seed);
             persistenceManager.SaveUniverse(universe);
+            return guid;
         }
 
         /// <summary>
