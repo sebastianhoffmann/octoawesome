@@ -8,6 +8,14 @@ The videos are in German, but the source code is clean and written to be underst
 
 ![Screenshot](http://wiki.octoawesome.net/images/thumb/0/01/Livestream.png/800px-Livestream.png)
 
+## Continouse Integration
+
+|  | master | develop |
+| --- | ----- | ---- |
+| Travis CI (Linux / OSX) | [![Build Status](https://travis-ci.org/OctoAwesome/octoawesome.svg?branch=master)](https://travis-ci.org/OctoAwesome/octoawesome) | [![Build Status](https://travis-ci.org/OctoAwesome/octoawesome.svg?branch=develop)](https://travis-ci.org/OctoAwesome/octoawesome) |
+| AppVeyor (Windows) | [![Build status](https://ci.appveyor.com/api/projects/status/cp38q1t1xsl9tth4/branch/master?svg=true)](https://ci.appveyor.com/project/reicheltp/octoawesome/branch/master) | [![Build status](https://ci.appveyor.com/api/projects/status/cp38q1t1xsl9tth4/branch/develop?svg=true)](https://ci.appveyor.com/project/reicheltp/octoawesome/branch/develop) |
+
+
 #### Links
 * [Project Wiki](http://wiki.octoawesome.net/wiki/Hauptseite)
 * <del>[Livestream on livecoding.tv](http://www.livecoding.tv/bobstriker)</del>
