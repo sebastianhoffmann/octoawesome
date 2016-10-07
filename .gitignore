@@ -18,6 +18,9 @@ bld/
 [Bb]in/
 [Oo]bj/
 
+# Cake Related
+[Tt]ools/
+
 # Diagnostics Files
 [Dd]iagnostics/
 
