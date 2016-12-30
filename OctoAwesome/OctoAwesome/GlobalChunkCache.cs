@@ -67,12 +67,16 @@ namespace OctoAwesome
         /// </summary>
         /// <param name="loadDelegate">Delegat, der nicht geladene ChunkColumns nachläd.</param>
         /// <param name="saveDelegate">Delegat, der nicht mehr benötigte ChunkColumns abspeichert.</param>
-        public GlobalChunkCache(Func<int, Index2, IChunkColumn> loadDelegate,Func<int,IPlanet> loadPlanetDelegate,
+        public GlobalChunkCache(Func<int, Index2, IChunkColumn> loadDelegate,
+            Func<int, IPlanet> loadPlanetDelegate,
             Action<int, Index2, IChunkColumn> saveDelegate)
         {
-            if (loadDelegate == null) throw new ArgumentNullException("loadDelegate");
-            if (saveDelegate == null) throw new ArgumentNullException("saveDelegate");
-            if (loadPlanetDelegate == null) throw new ArgumentNullException(nameof(loadPlanetDelegate));
+            if (loadDelegate == null)
+                throw new ArgumentNullException(nameof(loadDelegate));
+            if (saveDelegate == null)
+                throw new ArgumentNullException(nameof(saveDelegate));
+            if (loadPlanetDelegate == null)
+                throw new ArgumentNullException(nameof(loadPlanetDelegate));
 
             this.loadDelegate = loadDelegate;
             this.saveDelegate = saveDelegate;
@@ -95,7 +99,7 @@ namespace OctoAwesome
         /// <param name="planet">Die Id des Planeten</param>
         /// <param name="position">Position des Chunks</param>
         /// <returns></returns>
-        public IChunkColumn Subscribe(int planet, Index2 position,bool passive)
+        public IChunkColumn Subscribe(int planet, Index2 position, bool passive)
         {
             CacheItem cacheItem = null;
 
@@ -109,8 +113,7 @@ namespace OctoAwesome
                         return null;
                     }
 
-                    cacheItem = new CacheItem()
-                    {
+                    cacheItem = new CacheItem() {
                         Planet = planet,
                         Index = position,
                         References = 0,
@@ -127,7 +130,7 @@ namespace OctoAwesome
                     cacheItem.PassiveReference++;
                 else
                     cacheItem.References++;
-                
+
             }
 
             lock (cacheItem)
@@ -145,7 +148,7 @@ namespace OctoAwesome
 
             return cacheItem.ChunkColumn;
         }
-        
+
         public bool IsChunkLoaded(int planet, Index2 position)
         {
             return cache.ContainsKey(new Index3(position, planet));
@@ -187,7 +190,7 @@ namespace OctoAwesome
                     value.PassiveReference = 0;
                     _unreferencedItems.Enqueue(value);
                 }
-                
+
             }
             _autoResetEvent.Set();
         }
@@ -197,7 +200,7 @@ namespace OctoAwesome
         /// </summary>
         /// <param name="planet">Die Id des Planeten</param>
         /// <param name="position">Die Position des freizugebenden Chunks</param>
-        public void Release(int planet, Index2 position,bool passive)
+        public void Release(int planet, Index2 position, bool passive)
         {
             CacheItem cacheItem = null;
             lock (lockObject)
@@ -206,7 +209,7 @@ namespace OctoAwesome
                 {
                     if (!passive)
                     {
-                        throw new NotSupportedException(string.Format("Kein Chunk für die Position ({0}) im Cache", position));
+                        throw new NotSupportedException($"Kein Chunk für die Position ({position}) im Cache");
                     }
 
                     return;
@@ -238,6 +241,7 @@ namespace OctoAwesome
             {
                 _autoResetEvent.WaitOne();
                 var itemsToSave = new List<CacheItem>();
+
                 CacheItem ci;
                 while (_dirtyItems.TryDequeue(out ci))
                 {
@@ -250,7 +254,6 @@ namespace OctoAwesome
                     {
                         saveDelegate(item.Planet, item.Index, item.ChunkColumn);
                     }
-                    
                 }
 
                 while (_unreferencedItems.TryDequeue(out ci))
@@ -265,17 +268,18 @@ namespace OctoAwesome
                                 ci.Changed -= ItemChanged;
                                 cache.Remove(key);
                             }
-                                    lock (updatelockobject)
-                                    {
-                                        oldchunks.Enqueue(ci);
-                                    }
-                                }
+
+                            lock (updatelockobject)
+                            {
+                                oldchunks.Enqueue(ci);
+                            }
+                        }
                     }
                 }
             }
         }
 
-        
+
 
         /// <summary>
         /// Gibt einen Planenten anhand seiner ID zurück
@@ -287,7 +291,7 @@ namespace OctoAwesome
             return loadPlanetDelagte(id);
         }
 
-        public void BeforSimulationUpdate(Simulation simulation)
+        public void BeforeSimulationUpdate(Simulation simulation)
         {
             lock (updatelockobject)
             {
@@ -319,27 +323,28 @@ namespace OctoAwesome
 
             lock (lockObject)
             {
-                var failchunkentities = (from chunk in cache
-                                         where chunk.Value.ChunkColumn != null
-                                        from entity in chunk.Value.ChunkColumn.Entities.FailChunkEntity()
-                                        select entity).ToArray();
-                foreach (var entity in failchunkentities)
+                foreach (var chunk in cache)
                 {
-                    var currentchunk = Peek(entity.CurrentPlanet, entity.CurrentChunk);
-                    var targetchunk = Peek(entity.TargetPlanet, entity.TargetChunk);
+                    if (chunk.Value.ChunkColumn == null || chunk.Value.ChunkColumn.Entities.Count == 0)
+                        continue;
 
-                    currentchunk.Entities.Remove(entity.Entity);
+                    foreach (var entity in chunk.Value.ChunkColumn.Entities.FailChunkEntity())
+                    {
+                        var currentchunk = Peek(entity.CurrentPlanet, entity.CurrentChunk);
+                        var targetchunk = Peek(entity.TargetPlanet, entity.TargetChunk);
 
-                    if (targetchunk != null)
-                    {
-                        targetchunk.Entities.Add(entity.Entity);
-                    }
-                    else
-                    {
-                        throw new Exception("TODO");
+                        currentchunk.Entities.Remove(entity.Entity);
+
+                        if (targetchunk != null)
+                        {
+                            targetchunk.Entities.Add(entity.Entity);
+                        }
+                        else
+                        {
+                            throw new Exception("TODO");
+                        }
                     }
                 }
-
             }
         }
 
@@ -383,7 +388,6 @@ namespace OctoAwesome
             {
                 Changed?.Invoke(this);
             }
-            
         }
     }
 }

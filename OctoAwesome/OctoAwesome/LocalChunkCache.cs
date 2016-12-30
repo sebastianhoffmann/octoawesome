@@ -68,19 +68,6 @@ namespace OctoAwesome
             chunkColumns = new IChunkColumn[(mask + 1) * (mask + 1)];
         }
 
-        private void GlobalCache_OnUnloadChunk(int planet, Index3 index)
-        {
-            if (!IsPassive || Planet.Id != planet)
-                return;
-
-           
-            if (planet == Planet.Id && CenterPosition.X == index.X && CenterPosition.Y == index.Y )
-            {
-                OnUnloaded?.Invoke();
-            }
-
-        }
-
         /// <summary>
         /// Task, der bei einem Wechsel des Zentralen Chunks neue nachlädt falls nötig
         /// </summary>
@@ -147,11 +134,9 @@ namespace OctoAwesome
         /// <param name="successCallback">Routine die Aufgerufen werden soll, falls das setzen erfolgreich war oder nicht</param>
         private void InternalSetCenter(CancellationToken token, IPlanet planet, Index2 index, Action<bool> successCallback)
         {
-           
-
             if (planet == null)
             {
-                if (successCallback != null) successCallback(true);
+                successCallback?.Invoke(true);
                 return;
             }
 
@@ -169,7 +154,7 @@ namespace OctoAwesome
             // Erste Abbruchmöglichkeit
             if (token.IsCancellationRequested)
             {
-                if (successCallback != null) successCallback(false);
+                successCallback?.Invoke(false);
                 return;
             }
 
@@ -191,7 +176,7 @@ namespace OctoAwesome
                 // Zweite Abbruchmöglichkeit
                 if (token.IsCancellationRequested)
                 {
-                    if (successCallback != null) successCallback(false);
+                    successCallback?.Invoke(false);
                     return;
                 }
 
@@ -203,7 +188,7 @@ namespace OctoAwesome
 
                     if (chunkColumn == null)
                     {
-                        if (successCallback != null) successCallback(false);
+                        successCallback?.Invoke(false);
                         return;
                     }
                 }
@@ -211,12 +196,12 @@ namespace OctoAwesome
                 // Dritte Abbruchmöglichkeit
                 if (token.IsCancellationRequested)
                 {
-                    if (successCallback != null) successCallback(false);
+                    successCallback?.Invoke(false);
                     return;
                 }
             }
 
-            if (successCallback != null) successCallback(true);
+            successCallback?.Invoke(true);
         }
 
         /// <summary>
@@ -286,10 +271,7 @@ namespace OctoAwesome
         public ushort GetBlock(int x, int y, int z)
         {
             IChunk chunk = GetChunk(x >> Chunk.LimitX, y >> Chunk.LimitY, z >> Chunk.LimitZ);
-            if (chunk != null)
-                return chunk.GetBlock(x, y, z);
-
-            return 0;
+            return chunk?.GetBlock(x, y, z) ?? 0;
         }
 
         /// <summary>
@@ -313,8 +295,7 @@ namespace OctoAwesome
         public void SetBlock(int x, int y, int z, ushort block)
         {
             IChunk chunk = GetChunk(x >> Chunk.LimitX, y >> Chunk.LimitY, z >> Chunk.LimitZ);
-            if (chunk != null)
-                chunk.SetBlock(x, y, z, block);
+            chunk?.SetBlock(x, y, z, block);
         }
 
         /// <summary>
@@ -327,10 +308,7 @@ namespace OctoAwesome
         public int GetBlockMeta(int x, int y, int z)
         {
             IChunk chunk = GetChunk(x >> Chunk.LimitX, y >> Chunk.LimitY, z >> Chunk.LimitZ);
-            if (chunk != null)
-                return chunk.GetBlockMeta(x, y, z);
-
-            return 0;
+            return chunk?.GetBlockMeta(x, y, z) ?? 0;
         }
 
         /// <summary>
@@ -357,8 +335,7 @@ namespace OctoAwesome
         public void SetBlockMeta(int x, int y, int z, int meta)
         {
             IChunk chunk = GetChunk(x >> Chunk.LimitX, y >> Chunk.LimitY, z >> Chunk.LimitZ);
-            if (chunk != null)
-                chunk.SetBlockMeta(x, y, z, meta);
+            chunk?.SetBlockMeta(x, y, z, meta);
         }
 
         /// <summary>
@@ -369,8 +346,7 @@ namespace OctoAwesome
         public void SetBlockMeta(Index3 index, int meta)
         {
             IChunk chunk = GetChunk(index.X >> Chunk.LimitX, index.Y >> Chunk.LimitY, index.Z >> Chunk.LimitZ);
-            if (chunk != null)
-                chunk.SetBlockMeta(index.X, index.Y, index.Z, meta);
+            chunk?.SetBlockMeta(index.X, index.Y, index.Z, meta);
         }
 
         /// <summary>

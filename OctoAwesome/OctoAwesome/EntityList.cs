@@ -75,21 +75,21 @@ namespace OctoAwesome
         {
             foreach (var entity in entities)
             {
-                if (entity.Components.ContainsComponent<PositionComponent>())
-                {
-                    var position = entity.Components.GetComponent<PositionComponent>();
-                    if (position.Position.ChunkIndex.X != column.Index.X || position.Position.ChunkIndex.Y != column.Index.Y)
-                    {
-                        yield return new FailEntityChunkArgs()
-                        {
-                            Entity = entity,
-                            CurrentChunk = new Index2(column.Index),
-                            CurrentPlanet = column.Planet,
-                            TargetChunk = new Index2(position.Position.ChunkIndex),
-                            TargetPlanet = position.Position.Planet,
+                if (!entity.Components.ContainsComponent<PositionComponent>())
+                    continue;
 
-                        };
-                    }
+                var position = entity.Components.GetComponent<PositionComponent>();
+                if (position.Position.ChunkIndex.X != column.Index.X || position.Position.ChunkIndex.Y != column.Index.Y)
+                {
+                    yield return new FailEntityChunkArgs()
+                    {
+                        Entity = entity,
+                        CurrentChunk = new Index2(column.Index),
+                        CurrentPlanet = column.Planet,
+                        TargetChunk = new Index2(position.Position.ChunkIndex),
+                        TargetPlanet = position.Position.Planet,
+
+                    };
                 }
             }
         }

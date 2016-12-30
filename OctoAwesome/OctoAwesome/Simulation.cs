@@ -127,7 +127,7 @@ namespace OctoAwesome
         {
             if (State == SimulationState.Running)
             {
-                ResourceManager.GlobalChunkCache.BeforSimulationUpdate(this);
+                ResourceManager.GlobalChunkCache.BeforeSimulationUpdate(this);
 
                 //Update all Entities
                 foreach (var entity in Entities.OfType<UpdateableEntity>())

@@ -54,7 +54,7 @@ namespace OctoAwesome
         /// </summary>
         void Clear();
 
-        void BeforSimulationUpdate(Simulation simulation);
+        void BeforeSimulationUpdate(Simulation simulation);
         void AfterSimulationUpdate(Simulation simulation);
     }
 }
